@@ -1,26 +1,70 @@
 @import "tailwindcss";
-
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --color-primary: #ec5b13;
+  --color-background-light: #e9e4d0;
+  --color-retro-teal: #6ba3a3;
+  --color-retro-orange: #d98c5f;
+  --color-retro-yellow: #e9d8a6;
+  --color-retro-purple: #9b81a1;
+  --color-retro-green: #a3b18a;
+  --color-retro-red: #c57b7d;
+  --color-retro-border: #1a1a1a;
+  --font-sans: var(--font-public-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-lora), ui-serif, Georgia, serif;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+.retro-card-shadow {
+  box-shadow: 4px 4px 0px 0px #1a1a1a;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+.retro-button-shadow {
+  box-shadow: 3px 3px 0px 0px #332211;
+  transition: all 0.1s ease;
+}
+.retro-button-shadow:hover {
+  box-shadow: 2px 2px 0px 0px #332211;
+  transform: translate(1px, 1px);
+}
+.retro-button-shadow:active {
+  box-shadow: 1px 1px 0px 0px #332211;
+  transform: translate(2px, 2px);
+}
+
+.card-stack {
+  position: relative;
+}
+.card-stack::before,
+.card-stack::after {
+  content: "";
+  position: absolute;
+  background: white;
+  border: 4px solid #1a1a1a;
+  pointer-events: none;
+  z-index: -1;
+}
+.card-stack::before {
+  top: -6px;
+  left: 6px;
+  right: -6px;
+  bottom: 6px;
+}
+.card-stack::after {
+  top: -12px;
+  left: 12px;
+  right: -12px;
+  bottom: 12px;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
   }
 }
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+.card-slide-in {
+  animation: slideIn 0.3s ease-out;
 }
