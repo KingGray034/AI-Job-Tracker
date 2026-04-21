@@ -40,16 +40,16 @@ const applicationRouter = router({
   create: publicProcedure
     .input(
       z.object({
-        position: z.string().min(1, "Position is required"),
-        companyName: z.string().min(1, "Company name is required"),
+        position: z.string().min(1, "Position is required").max(200),
+        companyName: z.string().min(1, "Company name is required").max(200),
         companyWebsite: optionalUrl,
         status: z.enum(StatusValues).optional(),
-        jobDescription: z.string().optional(),
+        jobDescription: z.string().max(50000).optional(),
         salary: z.string().optional(),
         location: z.string().optional(),
         contactEmail: optionalEmail.optional(),
         jobUrl: optionalUrl,
-        notes: z.string().optional(),
+        notes: z.string().max(10000).optional(),
       }),
     )
     .mutation(async ({ input }) => {
@@ -91,14 +91,14 @@ const applicationRouter = router({
     .input(
       z.object({
         id: z.string(),
-        position: z.string().optional(),
+        position: z.string().max(200).optional(),
         status: z.enum(StatusValues).optional(),
-        jobDescription: z.string().optional(),
+        jobDescription: z.string().max(50000).optional(),
         salary: z.string().optional(),
         location: z.string().optional(),
         contactEmail: z.string().email().optional(),
         jobUrl: z.string().url().optional(),
-        notes: z.string().optional(),
+        notes: z.string().max(10000).optional(),
       }),
     )
     .mutation(({ input }) => {

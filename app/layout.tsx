@@ -15,9 +15,11 @@ const lora = Lora({
   weight: ["700"],
 });
 
-const metadata: Metadata = {
-  title: "Job Tracker - AI_Powered Application Manager",
-  description: "Track your jobapplications with AI assistance",
+export const metadata: Metadata = {
+  title: "Job Tracker - AI-Powered Application Manager",
+  description: "Track your job applications with AI assistance",
+  manifest: "/manifest.json",
+  themeColor: "#ec5b13",
 };
 
 function RootLayout({ children }: { children: React.ReactNode }) {
@@ -32,5 +34,4 @@ function RootLayout({ children }: { children: React.ReactNode }) {
   );
 }
 
-export { metadata };
 export default RootLayout;

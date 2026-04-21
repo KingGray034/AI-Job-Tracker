@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { cookies } from "next/headers";
 import { getGmailTokens } from "@/server/services/gmail";
 
 export async function GET(request: NextRequest) {
@@ -11,8 +12,14 @@ export async function GET(request: NextRequest) {
   try {
     const tokens = await getGmailTokens(code);
 
-    // JSON.stringify prevents XSS from token values containing special characters
-    const tokenJson = JSON.stringify(tokens.access_token);
+    const cookieStore = await cookies();
+    cookieStore.set("google_access_token", tokens.access_token ?? "", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 60 * 60,
+      path: "/",
+    });
 
     return new NextResponse(
       `<!DOCTYPE html>
@@ -21,9 +28,7 @@ export async function GET(request: NextRequest) {
         <body>
           <script>
             if (window.opener) {
-              const token = ${tokenJson};
-              window.opener.localStorage.setItem('gmail_access_token', token);
-              window.opener.localStorage.setItem('google_access_token', token);
+              window.opener.postMessage({ type: 'GOOGLE_AUTH_SUCCESS' }, window.location.origin);
               window.close();
             } else {
               document.body.innerHTML = '<p>Authorization successful! You can close this window.</p>';

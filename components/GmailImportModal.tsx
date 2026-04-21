@@ -18,30 +18,27 @@ type GmailEmail = {
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-function openOAuthWindow(url: string, onToken: (token: string) => void) {
+function openOAuthWindow(url: string, onSuccess: () => void) {
   const width = 600;
   const height = 700;
   const left = window.screen.width / 2 - width / 2;
   const top = window.screen.height / 2 - height / 2;
 
-  const authWindow = window.open(
+  window.open(
     url,
     "Gmail Authorization",
     `width=${width},height=${height},left=${left},top=${top}`,
   );
 
-  const checkAuth = setInterval(() => {
-    try {
-      if (authWindow?.closed) clearInterval(checkAuth);
-      const token = localStorage.getItem("gmail_access_token");
-      if (token) {
-        clearInterval(checkAuth);
-        onToken(token);
-      }
-    } catch {
-      // Cross-origin — window still open
+  const handler = (event: MessageEvent) => {
+    if (event.origin !== window.location.origin) return;
+    if (event.data?.type === "GOOGLE_AUTH_SUCCESS") {
+      window.removeEventListener("message", handler);
+      onSuccess();
     }
-  }, 500);
+  };
+
+  window.addEventListener("message", handler);
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -64,9 +61,9 @@ function GmailImportModal({ onCloseAction }: { onCloseAction: () => void }) {
 
   const handleAuth = () => {
     if (!authUrl) return;
-    openOAuthWindow(authUrl.url, (token) => {
+    openOAuthWindow(authUrl.url, () => {
       setStep("import");
-      searchGmail.mutate({ accessToken: token });
+      searchGmail.mutate();
     });
   };
 
